@@ -17,27 +17,34 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun MyApplicationTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
+    darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit
 ) {
     val colors = if (darkTheme) {
         darkColorScheme(
             primary = Color(0xFFBB86FC),
             secondary = Color(0xFF03DAC5),
-            tertiary = Color(0xFF3700B3)
+            tertiary = Color(0xFF3700B3),
+            background = Color.Black
         )
     } else {
         lightColorScheme(
             primary = Color(0xFF6200EE),
             secondary = Color(0xFF03DAC5),
-            tertiary = Color(0xFF3700B3)
+            tertiary = Color(0xFF3700B3),
+            background = Color.White
         )
     }
+
     val typography = Typography(
         bodyMedium = TextStyle(
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.Normal,
-            fontSize = 16.sp
+            fontSize = 16.sp,
+            color = if (darkTheme) {
+                Color.White
+            } else {
+                Color.Black
+            }
         )
     )
     val shapes = Shapes(
@@ -47,9 +54,6 @@ fun MyApplicationTheme(
     )
 
     MaterialTheme(
-        colorScheme = colors,
-        typography = typography,
-        shapes = shapes,
-        content = content
+        colorScheme = colors, typography = typography, shapes = shapes, content = content,
     )
 }
