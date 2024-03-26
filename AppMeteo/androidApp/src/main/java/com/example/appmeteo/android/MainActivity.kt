@@ -1,5 +1,10 @@
 package com.example.appmeteo.android
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,14 +25,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.LineHeightStyle
-import androidx.compose.ui.tooling.data.EmptyGroup.location
 import androidx.compose.ui.unit.dp
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationServices
+import androidx.core.content.ContextCompat
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyApplicationTheme {
                 Surface(Modifier.fillMaxSize()) {
-                    SearchBar()
+                    App()
 
                 }
 
@@ -44,9 +44,17 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@Composable
+fun App() {
+    val context = LocalContext.current
+
+    SearchBar(context)
+}
+
+
 
 @Composable
-fun SearchBar() {
+fun SearchBar(context: Context) {
     var text by remember {
         mutableStateOf("")
     }
@@ -66,21 +74,27 @@ fun SearchBar() {
 
         Row {
 
-            Button(
-                onClick = { validerVille(text) }
-            ) {
+            Button(onClick = { validerVille(text) }) {
                 Text("Valider")
             }
-            Button(onClick = {
-                // Déclencher l'opération de géolocalisation
-                scope.launch {
-                    val retrievedLocation = retrieveLocation(LocalContext.current)
-                    location = retrievedLocation
-                    // Appeler la fonction de rappel avec la localisation récupérée
-                    onLocationClicked(retrievedLocation)
-                }
-            }) {
+            Button(onClick = {btnLocalisation(context)}) {
                 Text("Utiliser géolocalisation")
+            }
+
+            val hasLocationPermission by remember {
+                mutableStateOf(
+                    ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED
+                )
+            }
+
+
+            if (hasLocationPermission) {
+                Text("Permission de localisation accordée")
+            } else {
+                Text("Permission de localisation non accordée")
             }
 
         }
@@ -88,18 +102,31 @@ fun SearchBar() {
     }
 }
 
-fun geolocalisation(any: Any) {
-
+@SuppressLint("MissingPermission")
+fun btnLocalisation(context: Context) {
+    val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager?
+    println()
+    println("avant le if")
+    if (locationManager != null) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            val location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+            if (location != null) {
+                val latitude = location.latitude
+                val longitude = location.longitude
+                println("Latitude: $latitude, Longitude: $longitude")
+            }
+        } else {
+            // Si les autorisations de localisation ne sont pas accordées, demandez-les à l'utilisateur
+            // Notez que cette demande d'autorisations doit être effectuée avant d'appeler getLastKnownLocation()
+            // pour éviter des problèmes de sécurité
+            // Vous pouvez appeler la fonction requestLocationPermission() ici ou gérer les autorisations d'une autre manière
+        }
+    }
 }
-
-@Composable
-fun Geolocalisation(location: Any) {
-    TODO("Not yet implemented")
-}
-
 
 fun validerVille(text: String) {
-    println("coucou !")
+    println(text)
 }
+
 
 
