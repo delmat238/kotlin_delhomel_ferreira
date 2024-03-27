@@ -8,6 +8,7 @@ androidx-activityCompose = "1.8.0"
 material = "1.6.4"
 ui = "1.1.0"
 playServicesLocation = "21.2.0"
+navigationCompose = "2.7.7"
 
 [libraries]
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
@@ -20,6 +21,7 @@ compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview"
 compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
 compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

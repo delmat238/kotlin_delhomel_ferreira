@@ -47,6 +47,7 @@ dependencies {
     implementation(libs.androidx.ui.v110)
     implementation(libs.androidx.material)
     implementation(libs.play.services.location)
+    implementation("androidx.navigation:navigation-compose:2.5.3")
 
 
 }
