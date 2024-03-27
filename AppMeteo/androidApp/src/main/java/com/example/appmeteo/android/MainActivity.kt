@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -13,11 +14,16 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.navigation.NavHostController
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.appmeteo.android.view.App
+import com.example.appmeteo.android.view.Favoris
+import com.example.appmeteo.android.view.Prevision
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -29,13 +35,8 @@ class MainActivity : ComponentActivity() {
                 val navControler = rememberNavController()
                 val routeHome = "Home"
                 val routeFavoris = "Favoris"
+                var selectedTab by remember { mutableStateOf("Home") }
                 Scaffold(
-//                    topBar = {
-//                        TopAppBar(
-//                            title = { Text("App Meteo") }
-//                        )
-//
-//                    },
                     content = { innerPadding ->
 
                         NavHost(
@@ -49,7 +50,12 @@ class MainActivity : ComponentActivity() {
                             composable(
                                 route = "Favoris",
                             ) {
-                                App(applicationContext, innerPadding)
+                                Favoris()
+                            }
+                            composable(
+                                route = "Prevision",
+                            ) {
+                                Prevision()
                             }
 
                         }
@@ -57,8 +63,11 @@ class MainActivity : ComponentActivity() {
 
                     bottomBar = {
                         NavigationBar {
-                            NavigationBarItem(selected = pageSelectione(navControler, "Home"),
-                                onClick = { navControler.navigate("Home") },
+                            NavigationBarItem(selected = selectionneIcon(selectedTab, "Home"),
+                                onClick = {
+                                    navControler.navigate("Home")
+                                    selectedTab = "Home"
+                                },
                                 icon = {
                                     Icon(
                                         imageVector = Icons.Default.Home, contentDescription = null
@@ -66,8 +75,11 @@ class MainActivity : ComponentActivity() {
                                 },
                                 label = { Text(text = "Home") })
 
-                            NavigationBarItem(selected = false,
-                                onClick = { navControler.navigate("Favoris") },
+                            NavigationBarItem(selected = selectionneIcon(selectedTab, "Favoris"),
+                                onClick = {
+                                    navControler.navigate("Favoris")
+                                    selectedTab = "Favoris"
+                                },
                                 icon = {
                                     Icon(
                                         imageVector = Icons.Default.Star, contentDescription = null
@@ -77,11 +89,25 @@ class MainActivity : ComponentActivity() {
                                     Text(text = "Favoris")
 
 
-                                }
+                                })
 
-                            )
-//                Surface(Modifier.fillMaxSize()) {
-//                    App()
+                            NavigationBarItem(selected = selectionneIcon(selectedTab, "Prevision"),
+                                onClick = {
+                                    navControler.navigate("Prevision")
+                                    selectedTab = "Prevision"
+                                },
+                                icon = {
+                                    Icon(
+                                        imageVector = Icons.Default.DateRange,
+                                        contentDescription = null
+                                    )
+                                },
+                                label = {
+                                    Text(text = "Prevision")
+
+
+                                })
+
 
                         }
 
@@ -92,16 +118,9 @@ class MainActivity : ComponentActivity() {
 
     }
 
+
 }
 
-fun pageSelectione(navControler: NavHostController, s: String): Boolean {
-//    if (navControler.currentDestination.toString().equals(s)) {
-//        return true
-//    } else {
-//        return false
-//    }
-
-    navControler.currentDestination?.let { println(it.equals(s)) }
-    return true
+fun selectionneIcon(selectedTab: String, r: String): Boolean {
+    return selectedTab == r
 }
-
