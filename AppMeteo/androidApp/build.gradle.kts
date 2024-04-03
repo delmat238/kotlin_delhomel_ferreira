@@ -45,5 +45,7 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.androidx.activity.compose)
     implementation("com.google.code.gson:gson:2.8.8")
+    implementation(libs.androidx.room.common)
+    implementation(libs.androidx.room.ktx)
     debugImplementation(libs.compose.ui.tooling)
 }
