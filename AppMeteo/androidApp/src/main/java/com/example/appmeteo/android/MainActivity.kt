@@ -26,6 +26,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        fetchWeatherData()
+
         setContent {
             var cityName by remember { mutableStateOf(readCityNameFromFile()) }
 
@@ -35,7 +37,7 @@ class MainActivity : ComponentActivity() {
                     onValueChange = {
                         cityName = it
                     },
-                    label = { Text("Obtenir les données météos") },
+                    label = { Text("Nom de la ville") },
                     modifier = Modifier.padding(16.dp)
                 )
 
@@ -43,22 +45,26 @@ class MainActivity : ComponentActivity() {
                     onClick = {
                         if (cityName.isNotBlank()) {
                             writeCityNameToFile(cityName)
-                            lifecycleScope.launch {
-                                val data = withContext(Dispatchers.IO) {
-                                    val weatherDataManager = WeatherDataManager()
-                                    weatherDataManager.fetchWeather(cityName)
-                                }
-                                weatherData = data
-                            }
+                            fetchWeatherData(cityName)
                         }
-
                     },
                     modifier = Modifier.padding(16.dp)
                 ) {
-                    Text("Sauvegarder le nom de la ville")
+                    Text("Obtenir les données météorologiques")
                 }
+
                 WeatherDataDisplay(weatherData)
             }
+        }
+    }
+
+    private fun fetchWeatherData(cityName: String = readCityNameFromFile()) {
+        lifecycleScope.launch {
+            val data = withContext(Dispatchers.IO) {
+                val weatherDataManager = WeatherDataManager()
+                weatherDataManager.fetchWeather(cityName)
+            }
+            weatherData = data
         }
     }
 
