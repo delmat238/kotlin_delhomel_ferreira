@@ -5,25 +5,39 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
-
 @Composable
 fun App(applicationContext: Context, innerPadding: PaddingValues) {
 
@@ -33,14 +47,15 @@ fun App(applicationContext: Context, innerPadding: PaddingValues) {
 
 @Composable
 fun SearchBar(context: Context, innerPadding: PaddingValues) {
-    var text by remember {
-        mutableStateOf("")
-    }
+    var text by remember { mutableStateOf("") }
+    val (ville, setVille) = remember { mutableStateOf("") }
 
     Column(
-        verticalArrangement = Arrangement.Top, // Centre verticalement tout le contenu de la colonne
-        horizontalAlignment = Alignment.CenterHorizontally, // Centre horizontalement tout le contenu de la colonne
-        modifier = Modifier.fillMaxWidth().padding(innerPadding) // Utilise toute la largeur disponible
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(innerPadding) // Utilise toute la largeur disponible
     ) {
 
         TextField(
@@ -52,12 +67,19 @@ fun SearchBar(context: Context, innerPadding: PaddingValues) {
 
         Row {
 
-            Button(onClick = { validerVille(text) }) {
+            Button(onClick = { setVille(text) }) {
                 Text("Valider")
             }
-            Button(onClick = { btnLocalisation(context) }) {
+
+
+            Spacer(modifier = Modifier.padding(2.dp))
+            Button(onClick = {
+                btnLocalisation(context)
+                setVille("Position actuelle")
+            }) {
                 Text("Utiliser géolocalisation")
             }
+
 
             val hasLocationPermission by remember {
                 mutableStateOf(
@@ -67,6 +89,7 @@ fun SearchBar(context: Context, innerPadding: PaddingValues) {
                 )
             }
         }
+        AfficherMeteo(ville = ville)
 
     }
 }
@@ -96,6 +119,94 @@ fun btnLocalisation(context: Context) {
 }
 
 fun validerVille(text: String) {
+
     println(text)
+
+}
+
+@Composable
+fun AfficherMeteo(ville: String) {
+    val shape: Shape = androidx.compose.foundation.shape.RoundedCornerShape(5.dp)
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier
+                .background(color = Color.White.copy(0.3f), shape)
+                .width(330.dp)
+                .height(550.dp)
+
+
+        ) {
+            Column {
+                Text(
+                    text = ville, style = TextStyle(
+                        fontSize = 30.sp,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .fillMaxWidth()
+
+                )
+
+                Spacer(modifier = Modifier.padding(10.dp))
+
+                Text(
+                    text = "Température : ",
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.padding(10.dp))
+
+                Text(
+                    text = "Température max : ",
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.padding(10.dp))
+
+                Text(
+                    text = "Température min : ",
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.padding(10.dp))
+
+                Text(
+                    text = "Temps : ",
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.padding(10.dp))
+
+                Text(
+                    text = "Vent : ",
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.padding(10.dp))
+
+                Text(
+                    text = "Indice UV : ",
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+
+            }
+
+        }
+    }
+
 }
 

@@ -4,6 +4,11 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
@@ -18,6 +23,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -37,27 +46,39 @@ class MainActivity : ComponentActivity() {
                 val routeFavoris = "Favoris"
                 var selectedTab by remember { mutableStateOf("Home") }
                 Scaffold(
+
+
                     content = { innerPadding ->
+                        Box() {
+                            val backgroundImage = painterResource(id = R.drawable.fond_ciel)
+                            Image(
+                                painter = backgroundImage,
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxSize(),
+                                alignment = Alignment.Center,
+                                contentScale = ContentScale.Crop
+                            )
+                            NavHost(
+                                navController = navControler, startDestination = "Home",
+//                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                composable(
+                                    route = "Home",
+                                ) {
+                                    App(applicationContext, innerPadding)
+                                }
+                                composable(
+                                    route = "Favoris",
+                                ) {
+                                    Favoris()
+                                }
+                                composable(
+                                    route = "Prevision",
+                                ) {
+                                    Prevision()
+                                }
 
-                        NavHost(
-                            navController = navControler, startDestination = "Home"
-                        ) {
-                            composable(
-                                route = "Home",
-                            ) {
-                                App(applicationContext, innerPadding)
                             }
-                            composable(
-                                route = "Favoris",
-                            ) {
-                                Favoris()
-                            }
-                            composable(
-                                route = "Prevision",
-                            ) {
-                                Prevision()
-                            }
-
                         }
                     },
 
