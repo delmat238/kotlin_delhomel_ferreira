@@ -44,8 +44,10 @@ dependencies {
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
     implementation(libs.androidx.activity.compose)
-    implementation("com.google.code.gson:gson:2.8.8")
-    implementation(libs.androidx.room.common)
-    implementation(libs.androidx.room.ktx)
-    debugImplementation(libs.compose.ui.tooling)
+    implementation(libs.androidx.ui.v110)
+    implementation(libs.androidx.material)
+    implementation(libs.play.services.location)
+    implementation("androidx.navigation:navigation-compose:2.5.3")
+
+
 }

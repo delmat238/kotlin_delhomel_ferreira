@@ -9,6 +9,8 @@ import java.io.PrintWriter
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class WeatherDataManager {
 
@@ -42,32 +44,36 @@ class WeatherDataManager {
     }
 
     private suspend fun retrieveLocation(cityName: String): JSONObject {
-        val nominatimUrl =
-            "$NOMINATIM_BASE_URL?format=json&q=${URLEncoder.encode(cityName, "UTF-8")}"
-        val nominatimResponse = URL(nominatimUrl).readText()
-        val jsonArray = JSONArray(nominatimResponse)
-        return jsonArray.getJSONObject(0)
+        return withContext(Dispatchers.IO) {
+            val nominatimUrl =
+                "$NOMINATIM_BASE_URL?format=json&q=${URLEncoder.encode(cityName, "UTF-8")}"
+            val nominatimResponse = URL(nominatimUrl).readText()
+            val jsonArray = JSONArray(nominatimResponse)
+            jsonArray.getJSONObject(0)
+        }
     }
 
     private suspend fun fetchData(urlString: String): JSONObject {
-        val url = URL(urlString)
-        val connection = url.openConnection() as HttpURLConnection
-        connection.requestMethod = "GET"
-        val encodedAuth = android.util.Base64.encodeToString(
-            "$USERNAME:$PASSWORD".toByteArray(Charsets.UTF_8),
-            android.util.Base64.NO_WRAP
-        )
-        connection.setRequestProperty("Authorization", "Basic $encodedAuth")
-        connection.connect()
+        return withContext(Dispatchers.IO) {
+            val url = URL(urlString)
+            val connection = url.openConnection() as HttpURLConnection
+            connection.requestMethod = "GET"
+            val encodedAuth = android.util.Base64.encodeToString(
+                "$USERNAME:$PASSWORD".toByteArray(Charsets.UTF_8),
+                android.util.Base64.NO_WRAP
+            )
+            connection.setRequestProperty("Authorization", "Basic $encodedAuth")
+            connection.connect()
 
-        val responseCode = connection.responseCode
-        return if (responseCode == HttpURLConnection.HTTP_OK) {
-            val inputStream = connection.inputStream
-            val result = inputStream.bufferedReader().use { it.readText() }
-            JSONObject(result)
-        } else {
-            Log.e("WeatherApp", "HTTP error response code: $responseCode")
-            JSONObject()
+            val responseCode = connection.responseCode
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                val inputStream = connection.inputStream
+                val result = inputStream.bufferedReader().use { it.readText() }
+                JSONObject(result)
+            } else {
+                Log.e("WeatherApp", "HTTP error response code: $responseCode")
+                JSONObject()
+            }
         }
     }
 }
